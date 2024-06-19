@@ -153,30 +153,12 @@ if __name__ == "__main__":
     plt.scatter(performance_ingenious[1], performance_ingenious[0], color='r', marker='o', s=100, label='Portfólio Ingênuo')
     plt.scatter(performance_min_variance[1], performance_min_variance[0], color='g', marker='x', s=100, label='Portfólio de Mínima Variância')
     plt.scatter(performance_tangency[1], performance_tangency[0], color='m', marker='*', s=100, label='Portfólio Tangente')
-    
-    # Marcando os pontos dos ativos individuais
-    for i, (ret, std) in enumerate(zip(mean_returns, np.sqrt(np.diag(cov_matrix)))):
-        plt.scatter(std, ret, marker='D', s=100)
-        plt.text(std, ret, f"Ativo {i+1}", fontsize=12, ha='right')
-
+  
     # Adicionando detalhes dos dados
     plt.title('Fronteira Eficiente com Detalhes dos Portfólios e Ativos')
     plt.xlabel('Desvio Padrão (Risco)')
     plt.ylabel('Retorno Esperado')
     plt.legend(loc='upper left')
     plt.grid(True)
-    
-    # Adicionando anotação para cada portfólio
-    plt.annotate('Portfólio Ingênuo', xy=(performance_ingenious[1], performance_ingenious[0]), 
-                 xytext=(performance_ingenious[1]+0.005, performance_ingenious[0]-0.02),
-                 arrowprops=dict(facecolor='black', arrowstyle='->'))
-    
-    plt.annotate('Portfólio de Mínima Variância', xy=(performance_min_variance[1], performance_min_variance[0]), 
-                 xytext=(performance_min_variance[1]+0.005, performance_min_variance[0]-0.02),
-                 arrowprops=dict(facecolor='black', arrowstyle='->'))
-    
-    plt.annotate('Portfólio Tangente', xy=(performance_tangency[1], performance_tangency[0]), 
-                 xytext=(performance_tangency[1]+0.005, performance_tangency[0]-0.02),
-                 arrowprops=dict(facecolor='black', arrowstyle='->'))
     
     plt.show()
