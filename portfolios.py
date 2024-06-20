@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 from scipy.stats import norm
 
-# Dados extraídos da imagem
+# Dados extraídos da planilha
 mean_returns = np.array([0.270, 0.144, -0.030, 0.099, 0.020, 0.122, 0.016, 0.070, 0.090, 0.076])
 cov_matrix = np.array([
     [0.001802, 0.000421, 0.000218, 0.000442, 0.000180, 0.000242, 0.000224, 0.000225, 0.000247, 0.000147],
