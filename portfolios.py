@@ -19,6 +19,7 @@ cov_matrix = np.array([
     [0.000147, 0.000151, 0.000098, 0.000182, 0.000089, 0.000115, 0.000109, 0.000121, 0.000124, 0.000094]
 ])
 risk_free_rate = 0.0425
+asset_names = ["NVDA", "AMD", "INTC", "MSFT", "IBM", "AAPL", "CSCO", "MSI", "GOOG", "META"]
 
 # Número de ativos
 num_assets = len(mean_returns)
@@ -128,37 +129,43 @@ if __name__ == "__main__":
             'VaR (95%)': var_95,
             'Beta': portfolio_beta,
             'Índice de Treynor': treynor,
-            'Risco Diversificável': diversifiable
+            'Risco Diversificável': diversifiable,
+            'Pesos': weights
         }
 
-    # Exibindo os resultados
-    for name, metrics_values in metrics.items():
-        print(f"\n{name}:\n")
-        for metric_name, value in metrics_values.items():
-            if isinstance(value, float):
-                print(f"{metric_name}: {value:.3f}")
+    # Imprimindo os resultados
+    for name, data in metrics.items():
+        print(f"{name} Portfólio:")
+        for metric, value in data.items():
+            if metric == 'Pesos':
+                print(f"  {metric}:")
+                for i, weight in enumerate(value):
+                    print(f"    {asset_names[i]}: {weight:.2%}")
             else:
-                print(f"{metric_name}: {value}")
+                print(f"  {metric}: {value}")
+        print()
 
-    # Calculando a Fronteira Eficiente
+    # Calculando e plotando a Fronteira Eficiente
     num_points = 100
-    results = efficient_frontier(mean_returns, cov_matrix, num_points)
-    returns, std_devs = results[0, :], results[1, :]
+    frontier = efficient_frontier(mean_returns, cov_matrix, num_points)
 
-    # Plotando a Fronteira Eficiente com detalhes
     plt.figure(figsize=(14, 8))
-    plt.plot(std_devs, returns, label='Fronteira Eficiente', color='b')
-    
-    # Marcando portfólios específicos
-    plt.scatter(performance_ingenious[1], performance_ingenious[0], color='r', marker='o', s=100, label='Portfólio Ingênuo')
-    plt.scatter(performance_min_variance[1], performance_min_variance[0], color='g', marker='x', s=100, label='Portfólio de Mínima Variância')
-    plt.scatter(performance_tangency[1], performance_tangency[0], color='m', marker='*', s=100, label='Portfólio Tangente')
-  
-    # Adicionando detalhes dos dados
-    plt.title('Fronteira Eficiente com Detalhes dos Portfólios e Ativos')
-    plt.xlabel('Desvio Padrão (Risco)')
+    plt.plot(frontier[1], frontier[0], label='Fronteira Eficiente', color='b')
+    plt.scatter(performance_ingenious[1], performance_ingenious[0], marker='o', color='r', label='Portfólio Ingênuo')
+    plt.scatter(performance_min_variance[1], performance_min_variance[0], marker='x', color='g', label='Portfólio de Mínima Variância')
+    plt.scatter(performance_tangency[1], performance_tangency[0], marker='*', color='m', label='Portfólio Tangente')
+
+    # Anotando os pesos dos ativos no gráfico
+    for portfolio, label, color, weights in zip([performance_ingenious, performance_min_variance, performance_tangency],
+                                                ['Portfólio Ingênuo', 'Portfólio de Mínima Variância', 'Portfólio Tangente'],
+                                                ['r', 'g', 'm'], [weights_ingenious, weights_min_variance, weights_tangency]):
+        plt.annotate(f'{label}\n' + '\n'.join([f'{asset_names[i]}: {weight:.2%}' for i, weight in enumerate(weights)]),
+                     xy=(portfolio[1], portfolio[0]), xytext=(10, 10), textcoords='offset points', 
+                     arrowprops=dict(facecolor=color, arrowstyle='->'), bbox=dict(facecolor='white', alpha=0.8))
+
+    plt.xlabel('Risco (Desvio Padrão)')
     plt.ylabel('Retorno Esperado')
+    plt.title('Fronteira Eficiente com Detalhes dos Portfólios e Ativos')
     plt.legend(loc='upper left')
     plt.grid(True)
-    
     plt.show()
